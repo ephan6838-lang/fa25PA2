@@ -89,24 +89,59 @@ int createLeafNodes(int freq[]) {
 
 // Step 3: Build the encoding tree using heap operations
 int buildEncodingTree(int nextFree) {
-    // TODO:
-    // 1. Create a MinHeap object.
-    // 2. Push all leaf node indices into the heap.
-    // 3. While the heap size is greater than 1:
-    //    - Pop two smallest nodes
-    //    - Create a new parent node with combined weight
-    //    - Set left/right pointers
-    //    - Push new parent index back into the heap
-    // 4. Return the index of the last remaining node (root)
-    return -1; // placeholder
+    MinHeap heap;
+    for (int i = 0; i < nextFree; ++i) heap.push(i);
+
+    if (heap.getSize() == 1) {
+        return heap.top();
+    }
+
+    int freePtr = nextFree;
+
+    while (heap.getSize() > 1) {
+        int x = heap.pop();
+        int y = heap.pop();
+
+
+        int p = freePtr++;
+        if (p >= MAX_NODES) {
+            cerr << "Error: node limit exceeded.\n";
+            exit(1);
+        }
+        charArr[p] = '\0';
+        leftArr[p] = x;
+        rightArr[p] = y;
+        weightArr[p] = weightArr[x] + weightArr[y];
+
+
+        heap.push(p);
+    }
+
+
+    return heap.top();
 }
 
 // Step 4: Use an STL stack to generate codes
 void generateCodes(int root, string codes[]) {
-    // TODO:
-    // Use stack<pair<int, string>> to simulate DFS traversal.
-    // Left edge adds '0', right edge adds '1'.
-    // Record code when a leaf node is reached.
+    if (root < 0) return;
+
+    bool isLeaf = (leftArr[root] == -1 && rightArr[root] == -1);
+    if (isLeaf){
+        if (charArr[root] >= 'a' && charArr[root] <= 'z')
+            codes[charArr[root]] - 'a'] = "0";
+return;
+    }
+
+    stack<pair<int, string>> st;
+    st.push({root, ""});
+
+    while (!st.empty()){
+        int node = st.top().first;
+        string path = st.top().second;
+        st.pop();
+
+        bool leaf = (leftArr[node])
+    }
 }
 
 // Step 5: Print table and encoded message
