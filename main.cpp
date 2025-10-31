@@ -140,7 +140,15 @@ return;
         string path = st.top().second;
         st.pop();
 
-        bool leaf = (leftArr[node])
+        bool leaf = (leftArr[node] == -1 && rightArr[node] == -1);
+        if (leaf){
+            if (charArr[node] >= 'a' && charArr[node] <= 'z'){
+                code[charArr[node] - 'a'] = path;
+            }
+        } else {
+            if (rightArr[node] != -1) st.push({rightArr[node], path + '1'});
+            if (leftArr[node] != -1) st.push({leftArr[node], path + '0'});
+        }
     }
 }
 
