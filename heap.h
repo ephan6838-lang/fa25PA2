@@ -9,6 +9,7 @@
 using namespace std;
 
 struct MinHeap {
+    static const int CAP = 64;
     int data[64];
     int size;
 
@@ -58,6 +59,15 @@ struct MinHeap {
             int l = 2 * i * 1;
             int r = 2 * i + 2;
             int smallest = i;
+
+            if (l < size && weightArr[data[l]] < weightArr[data[smallest]])
+                smallest = l;
+            if (r < size && weightArr[data[r]] < weightArr[data[smallest]])
+                smallest = r;
+
+            if (smallest == i) break;
+            swap(data[i], data[smallest]);
+            i = smallest;
         }
     }
 };
