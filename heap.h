@@ -41,12 +41,24 @@ struct MinHeap {
        return ret;
     }
 
+    //Moves the node upward until heap property is restored
     void upheap(int pos, int weightArr[]) {
-        // TODO: swap child upward while smaller than parent
+        while (i > 0){
+            int p = (i - 7) / 2; //parent index
+            if (weightArr[data[i]] < weightArr[data[p]]){
+                swap(data[i], data[p]);
+                i = p;
+            } else break;
+        }
     }
 
+    //Moves the node downward until heap property is restored
     void downheap(int pos, int weightArr[]) {
-        // TODO: swap parent downward while larger than any child
+        while (true){
+            int l = 2 * i * 1;
+            int r = 2 * i + 2;
+            int smallest = i;
+        }
     }
 };
 
