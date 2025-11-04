@@ -73,52 +73,52 @@ void buildFrequencyTable(int freq[], const string& filename) {
 
 // Step 2: Create leaf nodes for each character
 int createLeafNodes(int freq[]) {
-    int nextFree = 0;
-    for (int i = 0; i < 26; ++i) {
+    int nextFree = 0; //index tracker for the next available node
+    for (int i = 0; i < 26; ++i) { //loop over the alphabet
         if (freq[i] > 0) {
-            charArr[nextFree] = 'a' + i;
-            weightArr[nextFree] = freq[i];
+            charArr[nextFree] = 'a' + i; //assign character
+            weightArr[nextFree] = freq[i]; //assign the frequency
             leftArr[nextFree] = -1;
             rightArr[nextFree] = -1;
-            nextFree++;
+            nextFree++; //move to the next free slot
         }
     }
     cout << "Created " << nextFree << " leaf nodes.\n";
-    return nextFree;
+    return nextFree; //return text of how many nodes were created
 }
 
 // Step 3: Build the encoding tree using heap operations
 int buildEncodingTree(int nextFree) {
     MinHeap heap;
-    for (int i = 0; i < nextFree; ++i) heap.push(i);
+    for (int i = 0; i < nextFree; ++i) heap.push(i); //push all leaf nodes into heap
 
     if (heap.getSize() == 1) {
         return heap.top();
     }
 
-    int freePtr = nextFree;
+    int freePtr = nextFree; //next unused node index
 
-    while (heap.getSize() > 1) {
-        int x = heap.pop();
-        int y = heap.pop();
+    while (heap.getSize() > 1) { //combine until one root remains
+        int x = heap.pop(); //smallest frequency node
+        int y = heap.pop(); //second smallest frequency node
 
 
-        int p = freePtr++;
+        int p = freePtr++; //new parent mode index
         if (p >= MAX_NODES) {
             cerr << "Error: node limit exceeded.\n";
             exit(1);
         }
-        charArr[p] = '\0';
-        leftArr[p] = x;
-        rightArr[p] = y;
-        weightArr[p] = weightArr[x] + weightArr[y];
+        charArr[p] = '\0'; //internal node
+        leftArr[p] = x; //connect left child
+        rightArr[p] = y; //connect right child
+        weightArr[p] = weightArr[x] + weightArr[y]; //combine both weights
 
 
         heap.push(p);
     }
 
 
-    return heap.top();
+    return heap.top(); //root index of the final tree
 }
 
 // Step 4: Use an STL stack to generate codes
@@ -128,24 +128,25 @@ void generateCodes(int root, string codes[]) {
     bool isLeaf = (leftArr[root] == -1 && rightArr[root] == -1);
     if (isLeaf){
         if (charArr[root] >= 'a' && charArr[root] <= 'z')
-            codes[charArr[root]] - 'a'] = "0";
+            codes[charArr[root] - 'a'] = "0"; //single-char final case
 return;
     }
 
     stack<pair<int, string>> st;
-    st.push({root, ""});
+    st.push({root, ""}); //start from the root with empty path
 
     while (!st.empty()){
-        int node = st.top().first;
-        string path = st.top().second;
+        int node = st.top().first; //current node index
+        string path = st.top().second; //path 0s and 1s to reach
         st.pop();
 
         bool leaf = (leftArr[node] == -1 && rightArr[node] == -1);
         if (leaf){
             if (charArr[node] >= 'a' && charArr[node] <= 'z'){
-                code[charArr[node] - 'a'] = path;
+                codes[charArr[node] - 'a'] = path; //store final code
             }
         } else {
+            //push right first so left is processed earlier
             if (rightArr[node] != -1) st.push({rightArr[node], path + '1'});
             if (leftArr[node] != -1) st.push({leftArr[node], path + '0'});
         }
@@ -155,7 +156,7 @@ return;
 // Step 5: Print table and encoded message
 void encodeMessage(const string& filename, string codes[]) {
     cout << "\nCharacter : Code\n";
-    for (int i = 0; i < 26; ++i) {
+    for (int i = 0; i < 26; ++i) { //loop through alphabet
         if (!codes[i].empty())
             cout << char('a' + i) << " : " << codes[i] << "\n";
     }
@@ -166,9 +167,9 @@ void encodeMessage(const string& filename, string codes[]) {
     char ch;
     while (file.get(ch)) {
         if (ch >= 'A' && ch <= 'Z')
-            ch = ch - 'A' + 'a';
+            ch = ch - 'A' + 'a'; //Normalize casing
         if (ch >= 'a' && ch <= 'z')
-            cout << codes[ch - 'a'];
+            cout << codes[ch - 'a']; //Print encoded bits
     }
     cout << "\n";
     file.close();
